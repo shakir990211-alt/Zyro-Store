@@ -2,26 +2,18 @@
 <html lang="en" class="scroll-smooth">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Daraz.pk - Online Shopping App in Pakistan</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+    <title>Zyro Store - Online Shopping</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
         body { font-family: 'Inter', sans-serif; background: #fff; color: #2A2A2A; }
-        .daraz-orange { background-color: #F85606; }
-        .daraz-orange-hover:hover { background-color: #e54d00; }
+        .zyro-orange { background-color: #F85606; }
+        .zyro-orange-hover:hover { background-color: #e54d00; }
         .orange-text { color: #F85606; }
-        .daraz-black { color: #2A2A2A; }
+        .zyro-black { color: #2A2A2A; }
         .gradient-purple { background: linear-gradient(135deg, #6B21A8 0%, #4C1D95 100%); }
-        .search-placeholder-animation { animation: rotatePlaceholder 12s infinite; }
-        @keyframes rotatePlaceholder {
-            0%, 20% { content: "kashmiri bangles"; }
-            25%, 45% { content: "bags for girls"; }
-            50%, 70% { content: "airpods"; }
-            75%, 95% { content: "watch for boys"; }
-            100% { content: "makeup"; }
-        }
         .loader { border: 3px solid #f3f3f3; border-top: 3px solid #F85606; border-radius: 50%; width: 24px; height: 24px; animation: spin 1s linear infinite; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
         .hide-scrollbar::-webkit-scrollbar { display: none; }
@@ -34,9 +26,23 @@
         .page.active { display: block; }
         .slider-track { display: flex; transition: transform 0.4s ease; }
         .slider-item { flex-shrink: 0; }
+
         @media (max-width: 640px) {
-            .grid-cols-4 { grid-template-columns: repeat(2, 1fr); }
+            .grid-cols-2-sm { grid-template-columns: repeat(2, 1fr); }
+            .product-grid-mobile { grid-template-columns: repeat(2, 1fr); }
+            .flash-sale-item { min-width: 200px; }
+            .category-item { min-width: 100px; }
+            .bottom-nav-item { min-width: 60px; }
         }
+        @media (min-width: 641px) and (max-width: 1024px) {
+            .product-grid-tablet { grid-template-columns: repeat(3, 1fr); }
+        }
+        @media (min-width: 1025px) {
+            .product-grid-desktop { grid-template-columns: repeat(4, 1fr); }
+        }
+
+        .size-btn.active { background-color: #F85606 !important; color: white !important; border-color: #F85606 !important; }
+        .color-option.active { box-shadow: 0 0 0 2px #F85606 !important; }
     </style>
 </head>
 <body class="antialiased">
@@ -44,8 +50,8 @@
 <!-- ========== TOP ORANGE BAR ========== -->
 <div class="bg-[#F85606] text-white px-4 py-2 flex justify-between items-center text-sm font-medium z-50">
     <div class="flex items-center gap-2">
-        <div class="w-6 h-6 bg-white rounded flex items-center justify-center text-[#F85606] font-bold text-xs shadow-sm">D</div>
-        <span class="hidden sm:block">Daraz</span>
+        <div class="w-6 h-6 bg-white rounded flex items-center justify-center text-[#F85606] font-bold text-xs shadow-sm">Z</div>
+        <span class="hidden sm:block">Zyro Store</span>
     </div>
     <div class="flex items-center gap-2 text-xs">
         <span>Save more on App</span>
@@ -54,82 +60,85 @@
 </div>
 
 <!-- ========== HEADER SEARCH BAR ========== -->
-<div class="bg-[#F85606] px-4 py-2 relative z-40">
-    <div class="flex items-center gap-2 max-w-xl mx-auto">
-        <input type="text" id="searchInput" placeholder="kashmiri bangles" class="w-full bg-white rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#F85606]" autocomplete="off">
-        <button onclick="handleSearch()" class="daraz-orange text-white px-4 py-2 rounded font-bold">Search</button>
+<div class="bg-[#F85606] px-4 py-3 relative z-40">
+    <div class="flex items-center gap-2 max-w-7xl mx-auto">
+        <div class="relative w-full max-w-xl mx-auto lg:max-w-none lg:flex-1">
+            <input type="text" id="searchInput" placeholder="kashmiri bangles" class="w-full bg-white rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#F85606] pl-10" autocomplete="off">
+            <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"></i>
+        </div>
+        <button onclick="handleSearch()" class="zyro-orange text-white px-5 py-2.5 rounded-lg font-bold text-sm whitespace-nowrap hidden sm:block">Search</button>
     </div>
     <!-- Rotating placeholder notice -->
-    <div class="max-w-xl mx-auto mt-2 text-xs text-[#E5E7EB] text-center px-2">
+    <div class="max-w-7xl mx-auto mt-2 text-xs text-[#E5E7EB] text-center px-2 hidden md:block">
         <span class="italic opacity-80">Popular: kashmiri bangles, bags for girls, airpods, watch for boys, makeup</span>
     </div>
 </div>
 
 <!-- ========== BOTTOM NAV ICONS (Header level) ========== -->
-<div class="bg-[#F85606] px-2 py-2 overflow-x-auto hide-scrollbar whitespace-nowrap border-b border-[#E5E7EB]">
-    <div class="inline-flex gap-3 items-center">
-        <button class="flex flex-col items-center gap-1 text-xs text-[#F85606] font-bold">
+<div class="bg-[#F85606] px-3 py-2 overflow-x-auto hide-scrollbar whitespace-nowrap border-b border-[#E5E7EB]">
+    <div class="inline-flex gap-2 md:gap-3 items-center">
+        <button class="flex flex-col items-center gap-1 text-xs text-[#F85606] font-bold bottom-nav-item">
             <i class="fa-solid fa-coins text-xl"></i> Coins
         </button>
-        <button class="flex flex-col items-center gap-1 text-xs text-white opacity-90 font-medium">
+        <button class="flex flex-col items-center gap-1 text-xs text-white opacity-90 font-medium bottom-nav-item">
             <i class="fa-solid fa-store text-xl"></i> Official Mobiles
         </button>
-        <button class="flex flex-col items-center gap-1 text-xs text-white opacity-90 font-medium">
+        <button class="flex flex-col items-center gap-1 text-xs text-white opacity-90 font-medium bottom-nav-item">
             <i class="fa-solid fa-shirt text-xl"></i> Fashion
         </button>
-        <button class="flex flex-col items-center gap-1 text-xs text-white opacity-90 font-medium">
+        <button class="flex flex-col items-center gap-1 text-xs text-white opacity-90 font-medium bottom-nav-item">
             <i class="fa-solid fa-pills text-xl"></i> Pharmacy
         </button>
-        <button class="flex flex-col items-center gap-1 text-xs text-white opacity-90 font-medium">
+        <button class="flex flex-col items-center gap-1 text-xs text-white opacity-90 font-medium bottom-nav-item">
             <i class="fa-solid fa-tag text-xl"></i> Freebie
         </button>
-        <button class="flex flex-col items-center gap-1 text-xs text-white opacity-90 font-medium relative">
+        <button class="flex flex-col items-center gap-1 text-xs text-white opacity-90 font-medium relative bottom-nav-item">
             <i class="fa-solid fa-cart-shopping text-xl"></i> Cart
             <span id="cartBadge" class="absolute -top-1 -right-1 bg-white text-[#F85606] text-[10px] w-4 h-4 rounded-full flex items-center justify-center font-bold">0</span>
         </button>
-        <button class="flex flex-col items-center gap-1 text-xs text-white opacity-90 font-medium">
+        <button class="flex flex-col items-center gap-1 text-xs text-white opacity-90 font-medium bottom-nav-item">
             <i class="fa-solid fa-spa text-xl"></i> Beauty
         </button>
-        <button class="flex flex-col items-center gap-1 text-xs text-white opacity-90 font-medium">
+        <button class="flex flex-col items-center gap-1 text-xs text-white opacity-90 font-medium bottom-nav-item">
             <i class="fa-solid fa-tag text-xl"></i> Everyday Low Price
         </button>
-        <button class="flex flex-col items-center gap-1 text-xs text-white opacity-90 font-medium">
+        <button class="flex flex-col items-center gap-1 text-xs text-white opacity-90 font-medium bottom-nav-item">
             <i class="fa-solid fa-basket-shopping text-xl"></i> Grocery
         </button>
-        <button class="flex flex-col items-center gap-1 text-xs text-white opacity-90 font-medium">
+        <button class="flex flex-col items-center gap-1 text-xs text-white opacity-90 font-medium bottom-nav-item">
             <i class="fa-solid fa-truck text-xl"></i> Free Delivery
         </button>
     </div>
 </div>
 
 <!-- ========== HOME PAGE ========== -->
-<div id="homePage" class="page active min-h-screen">
+<div id="homePage" class="page active min-h-screen pb-24">
 
     <!-- 11.11 Sale Banner -->
-    <section class="gradient-purple p-4 text-white rounded-b-2xl relative overflow-hidden">
+    <section class="gradient-purple p-4 md:p-6 text-white rounded-b-2xl relative overflow-hidden">
         <div class="absolute top-0 right-0 -mt-4 -mr-4 w-32 h-32 bg-white/10 rounded-full blur-[100px]"></div>
-        <div class="relative z-10">
-            <h2 class="text-2xl font-bold mb-2 flex items-center gap-2">
+        <div class="relative z-10 max-w-7xl mx-auto">
+            <h2 class="text-xl md:text-2xl font-bold mb-2 flex items-center gap-2">
                 <i class="fa-solid fa-fire text-[#F85606]"></i> 11.11 Sale
             </h2>
-            <p class="text-sm opacity-90 mb-4">Up to 90% off + Extra discounts on everything</p>
-            <div class="flex gap-2">
-                <button class="daraz-orange text-white px-4 py-2 rounded text-sm font-bold shadow-lg">Shop Now</button>
-                <button class="bg-white/20 text-white px-4 py-2 rounded text-sm font-bold border border-white/30 backdrop-blur-sm">Categories</button>
+            <p class="text-sm md:text-base opacity-90 mb-4">Up to 90% off + Extra discounts on everything</p>
+            <div class="flex flex-wrap gap-2">
+                <button class="zyro-orange text-white px-5 py-2.5 rounded text-sm font-bold shadow-lg">Shop Now</button>
+                <button class="bg-white/20 text-white px-5 py-2.5 rounded text-sm font-bold border border-white/30 backdrop-blur-sm">Categories</button>
             </div>
         </div>
     </section>
 
     <!-- Flash Sale -->
-    <section class="bg-[#F85606] text-white p-4 relative overflow-hidden">
+    <section class="bg-[#F85606] text-white p-4 md:p-6 relative overflow-hidden">
         <div class="absolute top-0 left-0 w-full h-full bg-black/10"></div>
-        <div class="relative z-10">
-            <div class="flex justify-between items-center mb-4">
+        <div class="relative z-10 max-w-7xl mx-auto">
+            <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-4 gap-3">
                 <div>
-                    <h2 class="text-xl font-bold">Flash Sale</h2>
+                    <h2 class="text-lg md:text-xl font-bold">Flash Sale</h2>
                     <p class="text-xs opacity-90">Ends in <span id="flashTimer" class="font-bold">00:00:00</span></p>
                 </div>
-                <button class="text-xs border border-white/30 px-3 py-1 rounded backdrop-blur-sm">View All</button>
+                <button class="text-xs border border-white/30 px-3 py-1 rounded backdrop-blur-sm self-start">View All</button>
             </div>
             <div class="flex gap-3 overflow-x-auto hide-scrollbar pb-4" id="flashSaleContainer">
                 <!-- Populated by JS -->
@@ -138,9 +147,9 @@
     </section>
 
     <!-- Popular Categories For You -->
-    <section class="p-4 bg-white">
-        <div class="flex justify-between items-center mb-4">
-            <h2 class="text-xl font-bold daraz-black">Popular Categories For You</h2>
+    <section class="p-4 md:p-6 bg-white">
+        <div class="flex justify-between items-center mb-4 max-w-7xl mx-auto">
+            <h2 class="text-lg md:text-xl font-bold zyro-black">Popular Categories For You</h2>
             <button class="text-xs orange-text font-semibold">View All →</button>
         </div>
         <div class="flex gap-3 overflow-x-auto hide-scrollbar pb-4" id="categoryScrollContainer">
@@ -149,15 +158,15 @@
     </section>
 
     <!-- Category Tabs -->
-    <section class="bg-white p-4 border-t border-[#E5E7EB]">
-        <div class="flex gap-2 overflow-x-auto hide-scrollbar mb-4" id="categoryTabsContainer">
+    <section class="bg-white px-4 md:px-6 py-4 border-t border-[#E5E7EB]">
+        <div class="flex gap-2 overflow-x-auto hide-scrollbar mb-4 max-w-7xl mx-auto" id="categoryTabsContainer">
             <!-- Populated by JS -->
         </div>
     </section>
 
     <!-- Product Grid -->
-    <section class="bg-[#F9FAFB] p-4" id="productGridContainer">
-        <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4" id="productGrid">
+    <section class="bg-[#F9FAFB] p-4 md:p-6" id="productGridContainer">
+        <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-4 gap-3 md:gap-4 max-w-7xl mx-auto" id="productGrid">
             <!-- Populated by JS -->
         </div>
     </section>
@@ -165,10 +174,10 @@
 </div>
 
 <!-- ========== PRODUCT DETAIL PAGE ========== -->
-<div id="productPage" class="page min-h-screen bg-[#F9FAFB]">
+<div id="productPage" class="page min-h-screen bg-[#F9FAFB] pb-28">
     <!-- Back & Share Header -->
     <div class="bg-white px-4 py-3 shadow-sm sticky top-0 z-30">
-        <div class="flex items-center gap-3">
+        <div class="flex items-center gap-3 max-w-7xl mx-auto">
             <button onclick="showPage('homePage')" class="text-[#F85606] font-bold">← Back</button>
             <div class="flex-1 flex justify-end gap-2">
                 <button class="p-2 rounded-full bg-[#F9FAFB] text-[#2A2A2A]"><i class="fa-regular fa-heart"></i></button>
@@ -177,8 +186,8 @@
         </div>
     </div>
 
-    <div class="p-4 max-w-5xl mx-auto">
-        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+    <div class="p-4 md:p-6 max-w-7xl mx-auto">
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-4 lg:gap-6">
             <!-- Images (lg:col-span-6) -->
             <div class="lg:col-span-6 space-y-4">
                 <div class="relative group aspect-square bg-white rounded-xl overflow-hidden border border-[#E5E7EB]">
@@ -194,20 +203,22 @@
             </div>
 
             <!-- Details (lg:col-span-6) -->
-            <div class="lg:col-span-6 space-y-6">
-                <div class="bg-[#F85606] text-white px-4 py-3 rounded-xl flex items-center gap-3">
-                    <i class="fa-solid fa-fire text-2xl"></i>
-                    <div>
-                        <div class="text-xs font-bold uppercase tracking-wider opacity-90">11.11 Sale</div>
-                        <div class="text-sm font-bold" id="productSalePrice">Rs. 593</div>
+            <div class="lg:col-span-6 space-y-4 lg:space-y-6">
+                <div class="bg-[#F85606] text-white px-4 py-3 rounded-xl flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+                    <div class="flex items-center gap-3">
+                        <i class="fa-solid fa-fire text-2xl"></i>
+                        <div>
+                            <div class="text-xs font-bold uppercase tracking-wider opacity-90">11.11 Sale</div>
+                            <div class="text-sm font-bold" id="productSalePrice">Rs. 593</div>
+                        </div>
                     </div>
-                    <div class="ml-auto flex flex-col items-end">
+                    <div class="flex flex-col sm:flex-row sm:items-end gap-1">
                         <div class="text-xs opacity-90">Starts in</div>
                         <div class="text-xs font-mono font-bold" id="productCountdown">0 days 02:53:41</div>
                     </div>
                 </div>
 
-                <h1 class="text-xl font-bold daraz-black leading-tight" id="productTitle">Shoes for men Sports shoes for men Joggers</h1>
+                <h1 class="text-lg md:text-xl font-bold zyro-black leading-tight" id="productTitle">Shoes for men Sports shoes for men Joggers</h1>
 
                 <div class="flex items-center gap-2 mb-2">
                     <div class="flex gap-1">
@@ -221,23 +232,23 @@
                     <span class="text-xs text-gray-500">(169)</span>
                 </div>
 
-                <div class="flex items-center gap-3 mb-1">
-                    <span class="text-2xl font-bold daraz-black" id="productPrice">Rs. 679</span>
+                <div class="flex items-center gap-3 mb-1 flex-wrap">
+                    <span class="text-xl md:text-2xl font-bold zyro-black" id="productPrice">Rs. 679</span>
                     <span class="text-sm text-gray-400 line-through" id="productOriginalPrice">Rs. 1299</span>
                     <span class="text-xs bg-[#F85606]/10 text-[#F85606] px-2 py-1 rounded font-bold">-48%</span>
                 </div>
 
                 <!-- Size Options -->
                 <div>
-                    <p class="text-sm font-semibold daraz-black mb-3">Select Size</p>
-                    <div class="flex gap-2 mb-4" id="sizeOptionsContainer">
+                    <p class="text-sm font-semibold zyro-black mb-3">Select Size</p>
+                    <div class="flex flex-wrap gap-2 mb-4" id="sizeOptionsContainer">
                         <!-- Populated by JS -->
                     </div>
                 </div>
 
                 <!-- Color Thumbnails -->
                 <div class="mb-6">
-                    <p class="text-sm font-semibold daraz-black mb-3">Colors</p>
+                    <p class="text-sm font-semibold zyro-black mb-3">Colors</p>
                     <div class="flex gap-3" id="colorOptionsContainer">
                         <!-- Populated by JS -->
                     </div>
@@ -246,7 +257,7 @@
                 <!-- Delivery Info -->
                 <div class="bg-white p-4 rounded-xl border border-[#E5E7EB] shadow-sm">
                     <p class="text-xs text-gray-500 uppercase font-bold mb-2">Delivery to</p>
-                    <p class="text-sm daraz-black font-medium mb-1">Sindh, Karachi - Gulshan-e-Iqbal, Block 15</p>
+                    <p class="text-sm zyro-black font-medium mb-1">Sindh, Karachi - Gulshan-e-Iqbal, Block 15</p>
                     <p class="text-xs text-gray-500">Estimated delivery: Today by 8:00 PM</p>
                 </div>
 
@@ -255,38 +266,38 @@
                     <div class="bg-white p-4 rounded-xl border border-[#E5E7EB] shadow-sm text-center">
                         <i class="fa-solid fa-truck-fast text-[#F85606] text-xl mb-2"></i>
                         <p class="text-xs text-gray-500">Free Delivery</p>
-                        <p class="text-sm font-bold daraz-black">Today</p>
+                        <p class="text-sm font-bold zyro-black">Today</p>
                     </div>
                     <div class="bg-white p-4 rounded-xl border border-[#E5E7EB] shadow-sm text-center">
                         <i class="fa-solid fa-rotate-left text-[#F85606] text-xl mb-2"></i>
                         <p class="text-xs text-gray-500">14 days easy return</p>
-                        <p class="text-sm font-bold daraz-black">No questions</p>
+                        <p class="text-sm font-bold zyro-black">No questions</p>
                     </div>
                 </div>
 
                 <div class="bg-[#F9FAFB] p-4 rounded-xl border border-[#E5E7EB]">
                     <p class="text-xs text-gray-500 uppercase font-bold mb-3">Warranty</p>
-                    <p class="text-sm daraz-black">Warranty not available</p>
+                    <p class="text-sm zyro-black">Warranty not available</p>
                 </div>
             </div>
         </div>
 
         <!-- Ratings and Reviews Section -->
-        <section class="mt-8 bg-white p-6 rounded-xl border border-[#E5E7EB] shadow-sm">
+        <section class="mt-8 bg-white p-4 md:p-6 rounded-xl border border-[#E5E7EB] shadow-sm">
             <div class="flex justify-between items-center mb-6">
-                <h2 class="text-lg font-bold daraz-black">Ratings and Reviews</h2>
+                <h2 class="text-lg font-bold zyro-black">Ratings and Reviews</h2>
                 <span class="text-sm text-gray-500">169 Reviews</span>
             </div>
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4" id="reviewsContainer">
+            <div class="grid grid-cols-1 gap-4" id="reviewsContainer">
                 <!-- Populated by JS -->
             </div>
         </section>
 
     </div>
 
-    <!-- Sticky Bottom Bar -->
-    <div class="fixed bottom-0 left-0 right-0 bg-white border-t border-[#E5E7EB] p-4 z-50 shadow-lg">
-        <div class="flex gap-2">
+    <!-- Sticky Bottom Bar (Desktop only) -->
+    <div class="hidden md:block fixed bottom-0 left-0 right-0 bg-white border-t border-[#E5E7EB] p-4 z-50 shadow-lg">
+        <div class="flex gap-2 max-w-7xl mx-auto">
             <button onclick="showPage('homePage')" class="flex-1 bg-[#F9FAFB] p-3 rounded-xl text-center flex flex-col items-center justify-center gap-1">
                 <i class="fa-solid fa-store text-lg text-gray-500"></i>
                 <span class="text-[10px] text-gray-500 font-medium">Store</span>
@@ -295,11 +306,11 @@
                 <i class="fa-solid fa-comment-dots text-lg text-gray-500"></i>
                 <span class="text-[10px] text-gray-500 font-medium">Chat</span>
             </button>
-            <button onclick="addToCartDetail()" class="flex-1 daraz-orange p-3 rounded-xl text-center flex flex-col items-center justify-center gap-1 text-white">
+            <button onclick="addToCartDetail()" class="flex-1 zyro-orange p-3 rounded-xl text-center flex flex-col items-center justify-center gap-1 text-white">
                 <i class="fa-solid fa-bolt text-lg"></i>
                 <span class="text-[10px] font-bold">Buy Now</span>
             </button>
-            <button onclick="addToCartFromDetail()" class="flex-1 daraz-orange p-3 rounded-xl text-center flex flex-col items-center justify-center gap-1 text-white">
+            <button onclick="addToCartFromDetail()" class="flex-1 zyro-orange p-3 rounded-xl text-center flex flex-col items-center justify-center gap-1 text-white">
                 <i class="fa-solid fa-cart-plus text-lg"></i>
                 <span class="text-[10px] font-bold">Add to Cart</span>
             </button>
@@ -308,39 +319,39 @@
 </div>
 
 <!-- ========== CART PAGE ========== -->
-<div id="cartPage" class="page min-h-screen bg-[#F9FAFB]">
+<div id="cartPage" class="page min-h-screen bg-[#F9FAFB] pb-24">
     <div class="bg-white px-4 py-3 shadow-sm sticky top-0 z-30">
         <button onclick="showPage('homePage')" class="text-[#F85606] font-bold">← Back</button>
     </div>
 
-    <div class="p-4 max-w-4xl mx-auto">
-        <h1 class="text-xl font-bold daraz-black mb-6">Shopping Cart</h1>
+    <div class="p-4 md:p-6 max-w-4xl mx-auto">
+        <h1 class="text-lg md:text-xl font-bold zyro-black mb-6">Shopping Cart</h1>
 
         <div id="cartEmpty" class="hidden text-center py-20">
             <i class="fa-solid fa-cart-xmark text-4xl text-gray-300 mb-4"></i>
-            <h2 class="text-lg font-bold daraz-black mb-2">Your cart is empty</h2>
+            <h2 class="text-lg font-bold zyro-black mb-2">Your cart is empty</h2>
             <p class="text-gray-500 mb-6">Looks like you haven't added anything to your cart yet.</p>
-            <button onclick="showPage('homePage')" class="daraz-orange text-white px-6 py-2 rounded font-bold shadow-lg">Start Shopping</button>
+            <button onclick="showPage('homePage')" class="zyro-orange text-white px-6 py-2 rounded font-bold shadow-lg">Start Shopping</button>
         </div>
 
         <div id="cartItems" class="space-y-4">
             <!-- Cart items populated by JS -->
         </div>
 
-        <div class="mt-8 bg-white p-6 rounded-xl border border-[#E5E7EB] shadow-sm sticky top-[100px]">
+        <div class="mt-8 bg-white p-4 md:p-6 rounded-xl border border-[#E5E7EB] shadow-sm sticky top-[100px]">
             <div class="flex justify-between items-center mb-2">
-                <span class="text-sm daraz-black font-medium">Subtotal</span>
-                <span class="text-sm font-bold daraz-black" id="cartSubtotal">Rs. 0</span>
+                <span class="text-sm zyro-black font-medium">Subtotal</span>
+                <span class="text-sm font-bold zyro-black" id="cartSubtotal">Rs. 0</span>
             </div>
             <div class="flex justify-between items-center mb-4 text-xs text-gray-500">
                 <span>Delivery charges</span>
                 <span>Free</span>
             </div>
             <div class="flex justify-between items-center mb-6">
-                <span class="text-sm font-bold daraz-black">Total</span>
+                <span class="text-sm font-bold zyro-black">Total</span>
                 <span class="text-sm font-bold text-[#F85606]" id="cartTotal">Rs. 0</span>
             </div>
-            <button onclick="checkout()" class="w-full daraz-orange text-white py-3 rounded-xl font-bold text-lg shadow-lg">Proceed to Checkout</button>
+            <button onclick="checkout()" class="w-full zyro-orange text-white py-3 rounded-xl font-bold text-lg shadow-lg">Proceed to Checkout</button>
         </div>
     </div>
 </div>
@@ -363,9 +374,9 @@
     <!-- Bottom footer black 4 columns -->
     <div class="bg-[#2A2A2A] py-8 px-4 border-t border-[#444]">
         <div class="max-w-7xl mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
-            <!-- ZAYROSTORE -->
+            <!-- ZYRO STORE -->
             <div>
-                <h3 class="text-xl font-bold mb-4 tracking-wider">ZAYROSTORE</h3>
+                <h3 class="text-xl font-bold mb-4 tracking-wider">ZYRO STORE</h3>
                 <p class="text-sm text-[#9CA3AF] leading-relaxed">
                     Your one-stop destination for quality products at unbeatable prices. Shop the latest trends in fashion, electronics, home essentials, and more.
                 </p>
@@ -399,10 +410,37 @@
             </div>
         </div>
         <div class="max-w-7xl mx-auto mt-8 pt-6 border-t border-[#444] text-center text-xs text-[#6B7280]">
-            <p>&copy; 2024 ZAYROSTORE. All rights reserved.</p>
+            <p>&copy; 2024 ZYRO STORE. All rights reserved.</p>
         </div>
     </div>
 </footer>
+
+<!-- ========== MOBILE BOTTOM NAV ========== -->
+<nav class="fixed bottom-0 left-0 right-0 bg-white border-t border-[#E5E7EB] z-50 md:hidden shadow-lg">
+    <div class="flex justify-around items-center py-2">
+        <button onclick="showPage('homePage')" class="flex flex-col items-center gap-1 text-xs font-medium transition">
+            <i class="fa-solid fa-house text-xl"></i>
+            <span class="text-[10px]">Home</span>
+        </button>
+        <button onclick="showPage('homePage')" class="flex flex-col items-center gap-1 text-xs font-medium transition text-gray-500">
+            <i class="fa-solid fa-magnifying-glass text-xl"></i>
+            <span class="text-[10px]">Search</span>
+        </button>
+        <button onclick="showPage('cartPage')" class="flex flex-col items-center gap-1 text-xs font-medium transition relative text-[#F85606]">
+            <i class="fa-solid fa-cart-shopping text-xl"></i>
+            <span class="text-[10px]">Cart</span>
+            <span id="cartBadgeMobile" class="absolute -top-1 -right-2 bg-[#F85606] text-white text-[9px] w-4 h-4 rounded-full flex items-center justify-center font-bold">0</span>
+        </button>
+        <button class="flex flex-col items-center gap-1 text-xs font-medium transition text-gray-500">
+            <i class="fa-solid fa-bell text-xl"></i>
+            <span class="text-[10px]">Notify</span>
+        </button>
+        <button class="flex flex-col items-center gap-1 text-xs font-medium transition text-gray-500">
+            <i class="fa-solid fa-user text-xl"></i>
+            <span class="text-[10px]">Account</span>
+        </button>
+    </div>
+</nav>
 
 <!-- ========== CART DRAWER / TOAST ========== -->
 <div id="cartToast" class="fixed bottom-24 left-1/2 -translate-x-1/2 bg-[#2A2A2A] text-white px-4 py-3 rounded-xl shadow-2xl transform translate-y-20 opacity-0 transition-all duration-300 z-[60] flex items-center gap-3">
@@ -445,7 +483,7 @@ const products = [
     { id: 30, title: "Women's Ankle Boots", price: 1899, originalPrice: 3200, rating: 4.4, reviews: 76, image: "https://images.unsplash.com/photo-1543163627-9f49b879160a?w=400&q=80", category: "women", badge: "Hot", discount: "-40%", timer: "03:35:00" },
 ];
 
-let cart = JSON.parse(localStorage.getItem('darazCart')) || [];
+let cart = JSON.parse(localStorage.getItem('zyroCart')) || [];
 let currentProduct = null;
 let selectedSize = null;
 let selectedColor = null;
@@ -487,7 +525,7 @@ function renderHome() {
     // Flash Sale (first 3)
     const flashContainer = document.getElementById('flashSaleContainer');
     flashContainer.innerHTML = products.slice(0, 3).map(p => `
-        <div class="slider-item w-64 flex-shrink-0 bg-white rounded-xl p-3 border border-[#E5E7EB]">
+        <div class="slider-item w-64 md:w-72 flex-shrink-0 bg-white rounded-xl p-3 border border-[#E5E7EB]">
             <div class="relative mb-3">
                 <img src="${p.image}" alt="" class="w-full h-32 object-cover rounded-lg">
                 <span class="absolute top-2 right-2 bg-[#F85606] text-white text-[10px] px-2 py-1 rounded font-bold">${p.badge}</span>
@@ -497,7 +535,7 @@ function renderHome() {
                 <span class="text-xs text-gray-500 line-through">Rs. ${p.originalPrice}</span>
                 <span class="text-xs text-green-600 font-bold">${p.discount}</span>
             </div>
-            <h3 class="text-xs font-bold daraz-black line-clamp-2 mb-1">${p.title}</h3>
+            <h3 class="text-xs font-bold zyro-black line-clamp-2 mb-1">${p.title}</h3>
             <div class="flex items-center gap-1">
                 <span class="text-xs font-bold text-[#F85606]">Rs. ${p.price}</span>
             </div>
@@ -512,19 +550,19 @@ function renderHome() {
     const categories = ["3D Printers", "Pasta", "Screen Protectors", "Cassette", "Earbuds", "Lipstick", "Shoes", "Bags"];
     const catContainer = document.getElementById('categoryScrollContainer');
     catContainer.innerHTML = categories.map(c => `
-        <div class="slider-item flex-shrink-0 bg-white rounded-xl p-4 border border-[#E5E7EB] min-w-[120px] text-center">
-            <div class="w-12 h-12 bg-[#F9FAFB] rounded-lg flex items-center justify-center mx-auto mb-2">
+        <div class="slider-item flex-shrink-0 bg-white rounded-xl p-4 border border-[#E5E7EB] min-w-[100px] md:min-w-[120px] text-center">
+            <div class="w-10 md:w-12 h-10 md:h-12 bg-[#F9FAFB] rounded-lg flex items-center justify-center mx-auto mb-2">
                 <i class="fa-solid fa-tag text-[#F85606] text-lg"></i>
             </div>
-            <h4 class="text-sm font-bold daraz-black">${c}</h4>
+            <h4 class="text-sm font-bold zyro-black">${c}</h4>
         </div>
     `).join('');
 
     // Category Tabs
-    const tabs = ["All", "MegaDeals", "Fast", "Daraz Mart", "Top Brands"];
+    const tabs = ["All", "MegaDeals", "Fast", "Zyro Mart", "Top Brands"];
     const tabContainer = document.getElementById('categoryTabsContainer');
     tabContainer.innerHTML = tabs.map((t, i) => `
-        <button class="px-4 py-2 text-xs font-bold rounded-full ${i===0 ? 'daraz-orange text-white' : 'bg-[#F9FAFB] text-gray-600 border border-[#E5E7EB]'}" onclick="filterCategory('${t}')">${t}</button>
+        <button class="px-4 py-2 text-xs font-bold rounded-full ${i===0 ? 'zyro-orange text-white' : 'bg-[#F9FAFB] text-gray-600 border border-[#E5E7EB]'}" onclick="filterCategory('${t}')">${t}</button>
     `).join('');
 
     // Product Grid
@@ -540,7 +578,7 @@ function renderHome() {
                 <span class="text-xs text-gray-400 line-through">Rs. ${p.originalPrice}</span>
                 <span class="text-xs text-[#F85606] font-bold">${p.discount}</span>
             </div>
-            <h4 class="text-xs font-bold daraz-black line-clamp-2 mb-1">${p.title}</h4>
+            <h4 class="text-xs font-bold zyro-black line-clamp-2 mb-1">${p.title}</h4>
             <div class="flex items-center gap-1 mb-2">
                 ${[1,2,3,4,5].map(i => `<i class="fa-solid fa-star ${i <= Math.round(p.rating) ? 'star-filled' : 'star-empty'} text-[10px]"></i>`).join('')}
                 <span class="text-[10px] text-gray-500 ml-1">(${p.reviews})</span>
@@ -565,7 +603,7 @@ function handleSearch() {
                 <img src="${p.image}" alt="" class="w-full h-full object-cover rounded-lg group-hover:scale-105 transition duration-300">
                 <span class="absolute top-2 right-2 bg-[#F85606] text-white text-[10px] px-2 py-1 rounded font-bold">${p.badge}</span>
             </div>
-            <h4 class="text-xs font-bold daraz-black line-clamp-2 mb-1">${p.title}</h4>
+            <h4 class="text-xs font-bold zyro-black line-clamp-2 mb-1">${p.title}</h4>
             <div class="flex items-center gap-2">
                 <span class="text-xs text-gray-400 line-through">Rs. ${p.originalPrice}</span>
                 <span class="text-sm font-bold text-[#F85606]">Rs. ${p.price}</span>
@@ -587,7 +625,7 @@ function filterCategory(cat) {
                 <img src="${p.image}" alt="" class="w-full h-full object-cover rounded-lg group-hover:scale-105 transition duration-300">
                 <span class="absolute top-2 right-2 bg-[#F85606] text-white text-[10px] px-2 py-1 rounded font-bold">${p.badge}</span>
             </div>
-            <h4 class="text-xs font-bold daraz-black line-clamp-2 mb-1">${p.title}</h4>
+            <h4 class="text-xs font-bold zyro-black line-clamp-2 mb-1">${p.title}</h4>
             <div class="flex items-center gap-2">
                 <span class="text-xs text-gray-400 line-through">Rs. ${p.originalPrice}</span>
                 <span class="text-sm font-bold text-[#F85606]">Rs. ${p.price}</span>
@@ -614,7 +652,7 @@ function openProduct(id) {
     const sizes = ["EU:39 Matte Black", "EU:40 Matte Black", "EU:41 Matte Black", "EU:42 Matte Black", "EU:43 Matte Black"];
     const sizeContainer = document.getElementById('sizeOptionsContainer');
     sizeContainer.innerHTML = sizes.map((s, i) => `
-        <button onclick="selectSize(${i})" class="size-btn px-4 py-2 rounded border text-sm font-medium transition ${i===0 ? 'daraz-orange text-white border-[#F85606]' : 'bg-white text-gray-600 border-[#E5E7EB]'}" id="sizeBtn${i}">${s}</button>
+        <button onclick="selectSize(${i})" class="size-btn px-4 py-2 rounded border text-sm font-medium transition ${i===0 ? 'zyro-orange text-white border-[#F85606]' : 'bg-white text-gray-600 border-[#E5E7EB]'}" id="sizeBtn${i}">${s}</button>
     `).join('');
     selectedSize = sizes[0];
 
@@ -635,7 +673,7 @@ function openProduct(id) {
     ].map(r => `
         <div class="p-4 border border-[#E5E7EB] rounded-lg bg-[#F9FAFB]">
             <div class="flex justify-between items-start mb-2">
-                <span class="text-sm font-bold daraz-black">${r.user}</span>
+                <span class="text-sm font-bold zyro-black">${r.user}</span>
                 <span class="text-xs text-gray-500">${r.date}</span>
             </div>
             <div class="flex gap-1 mb-2">
@@ -651,7 +689,7 @@ function openProduct(id) {
 function selectSize(i) {
     selectedSize = document.querySelectorAll('.size-btn')[i].textContent;
     document.querySelectorAll('.size-btn').forEach((btn, idx) => {
-        btn.className = idx === i ? 'size-btn px-4 py-2 rounded border text-sm font-medium transition daraz-orange text-white border-[#F85606]' : 'size-btn px-4 py-2 rounded border text-sm font-medium transition bg-white text-gray-600 border-[#E5E7EB]';
+        btn.className = idx === i ? 'size-btn px-4 py-2 rounded border text-sm font-medium transition zyro-orange text-white border-[#F85606]' : 'size-btn px-4 py-2 rounded border text-sm font-medium transition bg-white text-gray-600 border-[#E5E7EB]';
     });
 }
 
@@ -666,9 +704,14 @@ function selectColor(i) {
 // ========== CART ==========
 function updateCartBadge() {
     const badge = document.getElementById('cartBadge');
+    const badgeMobile = document.getElementById('cartBadgeMobile');
     const total = cart.reduce((sum, item) => sum + item.qty, 0);
     badge.textContent = total;
     badge.style.display = total > 0 ? 'flex' : 'none';
+    if (badgeMobile) {
+        badgeMobile.textContent = total;
+        badgeMobile.style.display = total > 0 ? 'flex' : 'none';
+    }
 }
 
 function addToCartQuick(id) {
@@ -690,7 +733,7 @@ function addToCartLogic(p, qty) {
     } else {
         cart.push({ ...p, qty });
     }
-    localStorage.setItem('darazCart', JSON.stringify(cart));
+    localStorage.setItem('zyroCart', JSON.stringify(cart));
     updateCartBadge();
 }
 
@@ -704,7 +747,7 @@ function showToast() {
 
 function removeFromCart(id) {
     cart = cart.filter(item => item.id !== id);
-    localStorage.setItem('darazCart', JSON.stringify(cart));
+    localStorage.setItem('zyroCart', JSON.stringify(cart));
     updateCartBadge();
     renderCart();
 }
@@ -715,7 +758,7 @@ function changeQty(id, delta) {
         item.qty += delta;
         if (item.qty <= 0) removeFromCart(id);
         else {
-            localStorage.setItem('darazCart', JSON.stringify(cart));
+            localStorage.setItem('zyroCart', JSON.stringify(cart));
             updateCartBadge();
             renderCart();
         }
@@ -733,9 +776,9 @@ function renderCart() {
         cartEmpty.classList.add('hidden');
         cartItems.innerHTML = cart.map(item => `
             <div class="bg-white p-4 rounded-xl border border-[#E5E7EB] shadow-sm flex gap-4">
-                <img src="${item.image}" alt="" class="w-24 h-24 object-cover rounded-lg">
-                <div class="flex-1">
-                    <h4 class="text-sm font-bold daraz-black line-clamp-2">${item.title}</h4>
+                <img src="${item.image}" alt="" class="w-24 h-24 object-cover rounded-lg flex-shrink-0">
+                <div class="flex-1 min-w-0">
+                    <h4 class="text-sm font-bold zyro-black line-clamp-2">${item.title}</h4>
                     <div class="flex items-center gap-2 mt-1">
                         <span class="text-sm text-[#F85606] font-bold">Rs. ${item.price}</span>
                         <span class="text-xs text-gray-500">x${item.qty}</span>
@@ -746,7 +789,7 @@ function renderCart() {
                         <button onclick="changeQty(${item.id}, 1)" class="w-8 h-8 rounded border border-[#E5E7EB] flex items-center justify-center text-sm font-bold">+</button>
                     </div>
                 </div>
-                <button onclick="removeFromCart(${item.id})" class="text-gray-400 hover:text-[#F85606]"><i class="fa-solid fa-trash"></i></button>
+                <button onclick="removeFromCart(${item.id})" class="text-gray-400 hover:text-[#F85606] flex-shrink-0"><i class="fa-solid fa-trash"></i></button>
             </div>
         `).join('');
     }
@@ -762,7 +805,7 @@ function checkout() {
     }
     alert('Proceeding to checkout (demo mode - no backend). Order placed successfully!');
     cart = [];
-    localStorage.setItem('darazCart', JSON.stringify(cart));
+    localStorage.setItem('zyroCart', JSON.stringify(cart));
     updateCartBadge();
     renderCart();
 }
