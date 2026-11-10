@@ -338,6 +338,131 @@
     </div>
 </div>
 
+<!-- ========== LOGIN/ACCOUNT PAGE ========== -->
+<div id="accountPage" class="page min-h-screen bg-[#F9FAFB]">
+    <div class="bg-white px-4 py-3 shadow-sm sticky top-0 z-30">
+        <button onclick="showPage('homePage')" class="text-[#F85606] font-bold">← Back</button>
+    </div>
+
+    <div class="p-4">
+        <!-- Login/Signup Toggle -->
+        <div class="bg-white rounded-xl border border-[#E5E7EB] p-4 mb-4">
+            <div class="flex border-b border-[#E5E7EB] mb-4">
+                <button onclick="showLoginTab('login')" class="flex-1 py-3 text-center font-bold text-sm" id="tabLogin">Login</button>
+                <button onclick="showLoginTab('signup')" class="flex-1 py-3 text-center font-bold text-sm text-gray-500" id="tabSignup">Sign Up</button>
+            </div>
+
+            <!-- Login Form -->
+            <div id="loginForm">
+                <div class="space-y-4">
+                    <div>
+                        <label class="text-xs text-gray-500 block mb-1">Phone Number or Email</label>
+                        <input type="text" id="loginPhone" class="w-full px-4 py-3 rounded-lg border border-[#E5E7EB] focus:outline-none focus:ring-2 focus:ring-[#F85606] text-sm" placeholder="Enter phone or email">
+                    </div>
+                    <div>
+                        <label class="text-xs text-gray-500 block mb-1">Password</label>
+                        <div class="relative">
+                            <input type="password" id="loginPassword" class="w-full px-4 py-3 rounded-lg border border-[#E5E7EB] focus:outline-none focus:ring-2 focus:ring-[#F85606] text-sm pr-10" placeholder="Enter password">
+                            <button onclick="togglePassword('loginPassword')" class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400"><i class="fa-regular fa-eye" id="loginEyeIcon"></i></button>
+                        </div>
+                    </div>
+                    <div class="flex items-center justify-between">
+                        <label class="flex items-center gap-2 text-xs text-gray-600">
+                            <input type="checkbox" class="rounded border-[#E5E7EB] text-[#F85606] focus:ring-[#F85606]"> Remember me
+                        </label>
+                        <button class="text-xs orange-text font-medium">Forgot Password?</button>
+                    </div>
+                    <button onclick="handleLogin()" class="w-full daraz-orange text-white py-3 rounded-xl font-bold text-lg shadow-lg">Login</button>
+                </div>
+                <div class="mt-4 text-center text-xs text-gray-500">
+                    <span>Or continue with</span>
+                </div>
+                <div class="flex gap-3 mt-3 justify-center">
+                    <button class="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg border border-[#E5E7EB] text-sm font-medium">
+                        <i class="fa-brands fa-google text-xl"></i> Google
+                    </button>
+                    <button class="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg border border-[#E5E7EB] text-sm font-medium">
+                        <i class="fa-brands fa-facebook-f text-xl text-blue-600"></i> Facebook
+                    </button>
+                </div>
+            </div>
+
+            <!-- Signup Form -->
+            <div id="signupForm" class="hidden">
+                <div class="space-y-4">
+                    <div>
+                        <label class="text-xs text-gray-500 block mb-1">Full Name</label>
+                        <input type="text" id="signupName" class="w-full px-4 py-3 rounded-lg border border-[#E5E7EB] focus:outline-none focus:ring-2 focus:ring-[#F85606] text-sm" placeholder="Enter your name">
+                    </div>
+                    <div>
+                        <label class="text-xs text-gray-500 block mb-1">Phone Number</label>
+                        <input type="tel" id="signupPhone" class="w-full px-4 py-3 rounded-lg border border-[#E5E7EB] focus:outline-none focus:ring-2 focus:ring-[#F85606] text-sm" placeholder="Enter phone number">
+                    </div>
+                    <div>
+                        <label class="text-xs text-gray-500 block mb-1">Email (Optional)</label>
+                        <input type="email" id="signupEmail" class="w-full px-4 py-3 rounded-lg border border-[#E5E7EB] focus:outline-none focus:ring-2 focus:ring-[#F85606] text-sm" placeholder="Enter email">
+                    </div>
+                    <div>
+                        <label class="text-xs text-gray-500 block mb-1">Password</label>
+                        <div class="relative">
+                            <input type="password" id="signupPassword" class="w-full px-4 py-3 rounded-lg border border-[#E5E7EB] focus:outline-none focus:ring-2 focus:ring-[#F85606] text-sm pr-10" placeholder="Create password">
+                            <button onclick="togglePassword('signupPassword')" class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400"><i class="fa-regular fa-eye" id="signupEyeIcon"></i></button>
+                        </div>
+                    </div>
+                    <div>
+                        <label class="text-xs text-gray-500 block mb-1">Confirm Password</label>
+                        <div class="relative">
+                            <input type="password" id="signupConfirmPassword" class="w-full px-4 py-3 rounded-lg border border-[#E5E7EB] focus:outline-none focus:ring-2 focus:ring-[#F85606] text-sm pr-10" placeholder="Confirm password">
+                            <button onclick="togglePassword('signupConfirmPassword')" class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400"><i class="fa-regular fa-eye" id="signupConfirmEyeIcon"></i></button>
+                        </div>
+                    </div>
+                    <label class="flex items-start gap-2 text-xs text-gray-600">
+                        <input type="checkbox" class="rounded border-[#E5E7EB] text-[#F85606] focus:ring-[#F85606] mt-1"> I agree to the <span class="orange-text">Terms & Conditions</span> and <span class="orange-text">Privacy Policy</span>
+                    </label>
+                    <button onclick="handleSignup()" class="w-full daraz-orange text-white py-3 rounded-xl font-bold text-lg shadow-lg">Create Account</button>
+                </div>
+                <div class="mt-4 text-center text-xs text-gray-500">
+                    <span>Already have an account? </span><button onclick="showLoginTab('login')" class="orange-text font-medium">Login</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Guest User Section -->
+        <div class="bg-white rounded-xl border border-[#E5E7EB] p-4 mb-4">
+            <h3 class="text-lg font-bold daraz-black mb-4">Continue as Guest</h3>
+            <p class="text-sm text-gray-600 mb-4">Browse and add items to cart without an account. Your cart will be saved locally.</p>
+            <button onclick="showPage('homePage')" class="w-full bg-[#F9FAFB] text-[#F85606] py-3 rounded-xl font-bold text-lg border border-[#E5E7EB]">Continue as Guest</button>
+        </div>
+
+        <!-- Benefits -->
+        <div class="bg-white rounded-xl border border-[#E5E7EB] p-4">
+            <h3 class="text-lg font-bold daraz-black mb-4">Why create an account?</h3>
+            <div class="space-y-3 text-sm text-gray-600">
+                <div class="flex items-start gap-3">
+                    <i class="fa-solid fa-check-circle text-[#F85606] mt-1"></i>
+                    <span>Faster checkout with saved addresses</span>
+                </div>
+                <div class="flex items-start gap-3">
+                    <i class="fa-solid fa-check-circle text-[#F85606] mt-1"></i>
+                    <span>Track orders & view purchase history</span>
+                </div>
+                <div class="flex items-start gap-3">
+                    <i class="fa-solid fa-check-circle text-[#F85606] mt-1"></i>
+                    <span>Exclusive deals & personalized recommendations</span>
+                </div>
+                <div class="flex items-start gap-3">
+                    <i class="fa-solid fa-check-circle text-[#F85606] mt-1"></i>
+                    <span>Easy returns & refunds</span>
+                </div>
+                <div class="flex items-start gap-3">
+                    <i class="fa-solid fa-check-circle text-[#F85606] mt-1"></i>
+                    <span>Wishlist & save for later</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
 <!-- ========== BOTTOM NAV (Fixed) ========== -->
 <nav class="fixed bottom-0 left-0 right-0 bg-white border-t border-[#E5E7EB] z-50" id="bottomNav">
     <div class="flex justify-around items-center py-2">
@@ -354,7 +479,7 @@
             <span class="text-[10px]">Cart</span>
             <span id="cartBadgeNav" class="absolute -top-1 -right-2 bg-[#F85606] text-white text-[9px] w-4 h-4 rounded-full flex items-center justify-center font-bold">0</span>
         </button>
-        <button onclick="showPage('accountPage')" class="flex flex-col items-center gap-1 text-xs font-medium transition text-gray-500" id="navAccount">
+        <button onclick="showPage('accountPage')" class="flex flex-col items-center gap-1 text-xs font-medium transition relative" id="navAccount">
             <i class="fa-solid fa-user text-xl"></i>
             <span class="text-[10px]">Account</span>
         </button>
@@ -763,6 +888,73 @@ function checkout() {
     localStorage.setItem('darazCart', JSON.stringify(cart));
     updateCartBadge();
     renderCart();
+}
+
+// ========== LOGIN/SIGNUP ==========
+function showLoginTab(tab) {
+    const loginForm = document.getElementById('loginForm');
+    const signupForm = document.getElementById('signupForm');
+    const tabLogin = document.getElementById('tabLogin');
+    const tabSignup = document.getElementById('tabSignup');
+    
+    if (tab === 'login') {
+        loginForm.classList.remove('hidden');
+        signupForm.classList.add('hidden');
+        tabLogin.classList.remove('text-gray-500');
+        tabLogin.classList.add('text-[#F85606]', 'border-b-2', 'border-[#F85606]', '-mb-px');
+        tabSignup.classList.remove('text-[#F85606]', 'border-b-2', 'border-[#F85606]', '-mb-px');
+        tabSignup.classList.add('text-gray-500');
+    } else {
+        loginForm.classList.add('hidden');
+        signupForm.classList.remove('hidden');
+        tabSignup.classList.remove('text-gray-500');
+        tabSignup.classList.add('text-[#F85606]', 'border-b-2', 'border-[#F85606]', '-mb-px');
+        tabLogin.classList.remove('text-[#F85606]', 'border-b-2', 'border-[#F85606]', '-mb-px');
+        tabLogin.classList.add('text-gray-500');
+    }
+}
+
+function togglePassword(inputId) {
+    const input = document.getElementById(inputId);
+    const icon = document.getElementById(inputId + 'EyeIcon') || document.getElementById(inputId.replace('Password', '') + 'EyeIcon');
+    if (input.type === 'password') {
+        input.type = 'text';
+        if (icon) icon.classList.replace('fa-eye', 'fa-eye-slash');
+    } else {
+        input.type = 'password';
+        if (icon) icon.classList.replace('fa-eye-slash', 'fa-eye');
+    }
+}
+
+function handleLogin() {
+    const phone = document.getElementById('loginPhone').value;
+    const password = document.getElementById('loginPassword').value;
+    if (!phone || !password) {
+        alert('Please enter both phone/email and password');
+        return;
+    }
+    alert('Login successful! Welcome back.');
+    showPage('homePage');
+    // In real app: save user session to localStorage
+}
+
+function handleSignup() {
+    const name = document.getElementById('signupName').value;
+    const phone = document.getElementById('signupPhone').value;
+    const password = document.getElementById('signupPassword').value;
+    const confirmPassword = document.getElementById('signupConfirmPassword').value;
+    
+    if (!name || !phone || !password) {
+        alert('Please fill in all required fields');
+        return;
+    }
+    if (password !== confirmPassword) {
+        alert('Passwords do not match');
+        return;
+    }
+    alert('Account created successfully! Welcome to Daraz.');
+    showPage('homePage');
+    // In real app: save user to localStorage
 }
 
 // ========== INIT ==========
