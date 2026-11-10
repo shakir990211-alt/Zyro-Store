@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Order Placed - Daraz.pk</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        body { font-family: 'Inter', sans-serif; background: #fff; color: #2A2A2A; }
+        .daraz-orange { background-color: #F85606; }
+        .daraz-black { color: #2A2A2A; }
+    </style>
+</head>
+<body class="antialiased min-h-screen flex flex-col">
+
+<!-- ========== TOP BAR ========== -->
+<div class="bg-[#F85606] text-white px-4 py-2 flex justify-between items-center text-sm font-medium">
+    <div class="flex items-center gap-2">
+        <div class="w-6 h-6 bg-white rounded flex items-center justify-center text-[#F85606] font-bold text-xs shadow-sm">D</div>
+        <span>Daraz</span>
+    </div>
+</div>
+
+<!-- ========== SUCCESS CONTENT ========== -->
+<div class="flex-1 flex items-center justify-center px-4 py-12">
+    <div class="w-full max-w-md text-center">
+        <!-- Success Animation -->
+        <div class="mb-8">
+            <div class="w-24 h-24 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
+                <i class="fa-solid fa-check text-4xl text-green-600"></i>
+            </div>
+            <h1 class="text-3xl font-bold daraz-black mb-2">Order Placed Successfully!</h1>
+            <p class="text-gray-500">Thank you for shopping with Daraz</p>
+        </div>
+
+        <!-- Order Details Card -->
+        <div class="bg-white rounded-xl border border-[#E5E7EB] shadow-sm p-6 mb-6 text-left">
+            <div class="flex items-center justify-between mb-4 pb-4 border-b border-[#E5E7EB]">
+                <span class="text-sm text-gray-500">Order ID</span>
+                <span class="font-mono text-sm font-bold daraz-black" id="orderIdDisplay">Loading...</span>
+            </div>
+            <div class="space-y-3 text-sm">
+                <div class="flex justify-between"><span class="text-gray-500">Status</span><span class="font-medium daraz-black"><i class="fa-solid fa-clock text-yellow-500 mr-1"></i> Confirmed</span></div>
+                <div class="flex justify-between"><span class="text-gray-500">Payment</span><span class="font-medium daraz-black">Cash on Delivery</span></div>
+                <div class="flex justify-between"><span class="text-gray-500">Delivery</span><span class="font-medium daraz-black">Estimated 2-3 business days</span></div>
+            </div>
+        </div>
+
+        <!-- Next Steps -->
+        <div class="bg-[#F9FAFB] rounded-xl p-5 mb-6 text-left">
+            <h3 class="font-bold daraz-black mb-3 flex items-center gap-2"><i class="fa-solid fa-info-circle text-[#F85606]"></i> What happens next?</h3>
+            <div class="space-y-2 text-sm text-gray-600">
+                <div class="flex items-start gap-2"><span class="text-[#F85606] font-bold">1.</span> You'll receive an SMS with order details</div>
+                <div class="flex items-start gap-2"><span class="text-[#F85606] font-bold">2.</span> Our team will call to confirm your order</div>
+                <div class="flex items-start gap-2"><span class="text-[#F85606] font-bold">3.</span> Track your order in "My Orders" section</div>
+                <div class="flex items-start gap-2"><span class="text-[#F85606] font-bold">4.</span> Pay cash when delivered</div>
+            </div>
+        </div>
+
+        <!-- Buttons -->
+        <div class="space-y-3">
+            <button onclick="window.location.href='index.html'" class="w-full daraz-orange text-white py-3 rounded-xl font-bold text-lg shadow-lg">Continue Shopping</button>
+            <button onclick="window.location.href='index.html#accountPage'" class="w-full bg-white text-[#F85606] py-3 rounded-xl font-bold text-lg border-2 border-[#F85606]">View My Orders</button>
+        </div>
+
+        <!-- Support -->
+        <div class="mt-8 pt-6 border-t border-[#E5E7EB]">
+            <p class="text-xs text-gray-500 mb-2">Need help?</p>
+            <div class="flex justify-center gap-4 text-sm">
+                <a href="tel:02111132729" class="orange-text font-medium">Call: 021-111-DARAZ</a>
+                <a href="#" class="orange-text font-medium">Chat Support</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ========== FOOTER ========== -->
+<footer class="bg-[#2A2A2A] text-white py-6 px-4">
+    <div class="max-w-7xl mx-auto text-center text-xs text-[#6B7280]">
+        <p>&copy; 2024 Daraz.pk. All rights reserved.</p>
+    </div>
+</footer>
+
+<script>
+// Get orderId from URL
+const urlParams = new URLSearchParams(window.location.search);
+const orderId = urlParams.get('orderId');
+
+if (orderId) {
+    document.getElementById('orderIdDisplay').textContent = orderId;
+} else {
+    document.getElementById('orderIdDisplay').textContent = 'N/A';
+    document.getElementById('orderIdDisplay').classList.add('text-gray-400');
+}
+
+// Confetti animation
+function createConfetti() {
+    const colors = ['#F85606', '#6B21A8', '#059669', '#DC2626', '#EA580C'];
+    for (let i = 0; i < 50; i++) {
+        const confetti = document.createElement('div');
+        confetti.style.cssText = `
+            position: fixed;
+            width: 10px;
+            height: 10px;
+            background: ${colors[Math.floor(Math.random() * colors.length)]};
+            left: ${Math.random() * 100}vw;
+            top: -10px;
+            opacity: 0.8;
+            border-radius: ${Math.random() > 0.5 ? '50%' : '0'};
+            pointer-events: none;
+            z-index: 9999;
+            animation: fall ${2 + Math.random() * 3}s linear forwards;
+        `;
+        document.body.appendChild(confetti);
+        setTimeout(() => confetti.remove(), 5000);
+    }
+}
+
+// Add fall animation
+const style = document.createElement('style');
+style.textContent = `
+    @keyframes fall {
+        to {
+            transform: translateY(110vh) rotate(720deg);
+            opacity: 0;
+        }
+    }
+`;
+document.head.appendChild(style);
+
+createConfetti();
+</script>
+</body>
+</html>

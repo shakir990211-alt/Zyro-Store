@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Daraz Admin Panel</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        body { font-family: 'Inter', sans-serif; background: #f5f5f5; color: #2A2A2A; }
+        .daraz-orange { background-color: #F85606; }
+        .daraz-orange-hover:hover { background-color: #e54d00; }
+        .orange-text { color: #F85606; }
+    </style>
+</head>
+<body class="antialiased">
+
+<!-- ========== FIREBASE INIT ========== -->
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getFirestore, collection, addDoc, getDocs, doc, setDoc, deleteDoc, updateDoc, query, where, orderBy, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyDZojZWP2Xf6toSm93euf-_X2QlYRERnC8",
+  authDomain: "daraz-5fc2a.firebaseapp.com",
+  projectId: "daraz-5fc2a",
+  storageBucket: "daraz-5fc2a.firebasestorage.app",
+  messagingSenderId: "83175937504",
+  appId: "1:83175937504:web:b7fadd162237beca0ec785",
+  measurementId: "G-8HQ1EXDNT4"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+const auth = getAuth(app);
+
+window.firebase = { db, auth, collection, addDoc, getDocs, doc, setDoc, deleteDoc, updateDoc, query, where, orderBy, onSnapshot, signInWithEmailAndPassword, signOut, onAuthStateChanged };
+</script>
+
+<!-- ========== LOGIN SCREEN ========== -->
+<div id="loginScreen" class="min-h-screen flex items-center justify-center bg-[#F9FAFB]">
+    <div class="bg-white p-8 rounded-xl border border-[#E5E7EB] shadow-sm w-full max-w-md">
+        <div class="text-center mb-8">
+            <div class="w-16 h-16 bg-[#F85606] rounded-full flex items-center justify-center mx-auto mb-4"><i class="fa-solid fa-user-shield text-3xl text-white"></i></div>
+            <h1 class="text-2xl font-bold daraz-black">Admin Panel</h1>
+            <p class="text-gray-500 mt-1">Sign in to manage orders & products</p>
+        </div>
+        <div class="space-y-4">
+            <div><label class="text-xs text-gray-500 block mb-1">Admin Email</label><input type="email" id="adminEmail" class="w-full px-4 py-3 rounded-lg border border-[#E5E7EB] focus:outline-none focus:ring-2 focus:ring-[#F85606] text-sm" placeholder="admin@daraz.pk"></div>
+            <div><label class="text-xs text-gray-500 block mb-1">Password</label><input type="password" id="adminPassword" class="w-full px-4 py-3 rounded-lg border border-[#E5E7EB] focus:outline-none focus:ring-2 focus:ring-[#F85606] text-sm" placeholder="Enter password"></div>
+            <button onclick="adminLogin()" class="w-full daraz-orange text-white py-3 rounded-xl font-bold text-lg shadow-lg">Sign In</button>
+        </div>
+        <p id="loginError" class="text-red-500 text-sm text-center mt-4 hidden"></p>
+    </div>
+</div>
+
+<!-- ========== ADMIN DASHBOARD ========== -->
+<div id="adminDashboard" class="hidden min-h-screen bg-[#F9FAFB]">
+    <!-- Top Bar -->
+    <div class="bg-white border-b border-[#E5E7EB] sticky top-0 z-40">
+        <div class="max-w-7xl mx-auto px-4 py-3 flex justify-between items-center">
+            <div class="flex items-center gap-3">
+                <i class="fa-solid fa-user-shield text-2xl text-[#F85606]"></i>
+                <h1 class="text-xl font-bold daraz-black">Daraz Admin</h1>
+            </div>
+            <div class="flex items-center gap-4">
+                <span class="text-sm text-gray-600" id="adminUserEmail"></span>
+                <button onclick="adminLogout()" class="daraz-orange text-white px-4 py-2 rounded text-sm font-bold">Logout</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="max-w-7xl mx-auto px-4 py-6">
+        <!-- Tabs -->
+        <div class="flex border-b border-[#E5E7EB] mb-6">
+            <button onclick="showAdminTab('orders')" class="px-6 py-3 font-bold text-sm border-b-2 border-[#F85606] text-[#F85606]" id="tabOrders">Orders</button>
+            <button onclick="showAdminTab('products')" class="px-6 py-3 font-bold text-sm text-gray-500" id="tabProducts">Products</button>
+            <button onclick="showAdminTab('addProduct')" class="px-6 py-3 font-bold text-sm text-gray-500" id="tabAddProduct">Add Product</button>
+        </div>
+
+        <!-- Orders Tab -->
+        <div id="panelOrders" class="admin-panel">
+            <div class="bg-white rounded-xl border border-[#E5E7EB] overflow-hidden">
+                <div class="overflow-x-auto">
+                    <table class="w-full">
+                        <thead class="bg-[#F9FAFB] border-b border-[#E5E7EB]">
+                            <tr>
+                                <th class="px-4 py-3 text-left text-xs font-bold text-gray-500 uppercase">Order ID</th>
+                                <th class="px-4 py-3 text-left text-xs font-bold text-gray-500 uppercase">Customer</th>
+                                <th class="px-4 py-3 text-left text-xs font-bold text-gray-500 uppercase">Phone</th>
+                                <th class="px-4 py-3 text-left text-xs font-bold text-gray-500 uppercase">Items</th>
+                                <th class="px-4 py-3 text-left text-xs font-bold text-gray-500 uppercase">Total</th>
+                                <th class="px-4 py-3 text-left text-xs font-bold text-gray-500 uppercase">Status</th>
+                                <th class="px-4 py-3 text-left text-xs font-bold text-gray-500 uppercase">Date</th>
+                                <th class="px-4 py-3 text-left text-xs font-bold text-gray-500 uppercase">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="ordersTableBody" class="divide-y divide-[#E5E7EB]">
+                            <tr><td colspan="8" class="px-4 py-12 text-center text-gray-500"><i class="fa-solid fa-spinner fa-spin text-xl"></i> Loading orders...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Products Tab -->
+        <div id="panelProducts" class="admin-panel hidden">
+            <div class="bg-white rounded-xl border border-[#E5E7EB] overflow-hidden">
+                <div class="overflow-x-auto">
+                    <table class="w-full">
+                        <thead class="bg-[#F9FAFB] border-b border-[#E5E7EB]">
+                            <tr>
+                                <th class="px-4 py-3 text-left text-xs font-bold text-gray-500 uppercase">Image</th>
+                                <th class="px-4 py-3 text-left text-xs font-bold text-gray-500 uppercase">Title</th>
+                                <th class="px-4 py-3 text-left text-xs font-bold text-gray-500 uppercase">Category</th>
+                                <th class="px-4 py-3 text-left text-xs font-bold text-gray-500 uppercase">Price</th>
+                                <th class="px-4 py-3 text-left text-xs font-bold text-gray-500 uppercase">Original</th>
+                                <th class="px-4 py-3 text-left text-xs font-bold text-gray-500 uppercase">Discount</th>
+                                <th class="px-4 py-3 text-left text-xs font-bold text-gray-500 uppercase">Rating</th>
+                                <th class="px-4 py-3 text-left text-xs font-bold text-gray-500 uppercase">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="productsTableBody" class="divide-y divide-[#E5E7EB]">
+                            <tr><td colspan="8" class="px-4 py-12 text-center text-gray-500"><i class="fa-solid fa-spinner fa-spin text-xl"></i> Loading products...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Add Product Tab -->
+        <div id="panelAddProduct" class="admin-panel hidden">
+            <div class="bg-white rounded-xl border border-[#E5E7EB] p-6">
+                <h2 class="text-xl font-bold daraz-black mb-6">Add New Product</h2>
+                <form id="addProductForm" class="space-y-4 max-w-2xl">
+                    <div class="grid grid-cols-2 gap-4">
+                        <div><label class="text-xs text-gray-500 block mb-1">Title *</label><input type="text" id="prodTitle" class="w-full px-4 py-3 rounded-lg border border-[#E5E7EB] focus:outline-none focus:ring-2 focus:ring-[#F85606] text-sm" required placeholder="Product title"></div>
+                        <div><label class="text-xs text-gray-500 block mb-1">Category *</label><select id="prodCategory" class="w-full px-4 py-3 rounded-lg border border-[#E5E7EB] focus:outline-none focus:ring-2 focus:ring-[#F85606] text-sm" required><option value="">Select</option><option value="electronics">Electronics</option><option value="men">Men</option><option value="women">Women</option><option value="home">Home</option><option value="beauty">Beauty</option><option value="health">Health</option><option value="fashion">Fashion</option><option value="grocery">Grocery</option></select></div>
+                    </div>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div><label class="text-xs text-gray-500 block mb-1">Price (Rs.) *</label><input type="number" id="prodPrice" class="w-full px-4 py-3 rounded-lg border border-[#E5E7EB] focus:outline-none focus:ring-2 focus:ring-[#F85606] text-sm" required placeholder="679"></div>
+                        <div><label class="text-xs text-gray-500 block mb-1">Original Price (Rs.) *</label><input type="number" id="prodOriginalPrice" class="w-full px-4 py-3 rounded-lg border border-[#E5E7EB] focus:outline-none focus:ring-2 focus:ring-[#F85606] text-sm" required placeholder="1299"></div>
+                    </div>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div><label class="text-xs text-gray-500 block mb-1">Discount % *</label><input type="text" id="prodDiscount" class="w-full px-4 py-3 rounded-lg border border-[#E5E7EB] focus:outline-none focus:ring-2 focus:ring-[#F85606] text-sm" required placeholder="-48%"></div>
+                        <div><label class="text-xs text-gray-500 block mb-1">Rating</label><input type="number" id="prodRating" class="w-full px-4 py-3 rounded-lg border border-[#E5E7EB] focus:outline-none focus:ring-2 focus:ring-[#F85606] text-sm" step="0.1" min="0" max="5" value="4.5" placeholder="4.5"></div>
+                    </div>
+                    <div><label class="text-xs text-gray-500 block mb-1">Sold Count</label><input type="text" id="prodSold" class="w-full px-4 py-3 rounded-lg border border-[#E5E7EB] focus:outline-none focus:ring-2 focus:ring-[#F85606] text-sm" placeholder="1k+ sold" value="1k+ sold"></div>
+                    <div><label class="text-xs text-gray-500 block mb-1">Image URL *</label><input type="url" id="prodImage" class="w-full px-4 py-3 rounded-lg border border-[#E5E7EB] focus:outline-none focus:ring-2 focus:ring-[#F85606] text-sm" required placeholder="https://images.unsplash.com/photo-xxx?w=400&q=80"></div>
+                    <div><label class="text-xs text-gray-500 block mb-1">Badge</label><input type="text" id="prodBadge" class="w-full px-4 py-3 rounded-lg border border-[#E5E7EB] focus:outline-none focus:ring-2 focus:ring-[#F85606] text-sm" placeholder="11.11 / Hot / New" value="11.11"></div>
+                    <button type="submit" class="w-full daraz-orange text-white py-3 rounded-xl font-bold text-lg shadow-lg mt-4">Add Product to Firestore</button>
+                </form>
+                <p id="addProductMsg" class="text-sm text-center mt-4 hidden"></p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// ========== ADMIN LOGIC ==========
+const ADMIN_EMAIL = "admin@daraz.pk"; // Change this to your admin email
+const ADMIN_PASSWORD = "admin123"; // Change this to your admin password
+
+// Check auth state on load
+window.firebase.onAuthStateChanged(window.firebase.auth, (user) => {
+    if (user) {
+        document.getElementById('loginScreen').classList.add('hidden');
+        document.getElementById('adminDashboard').classList.remove('hidden');
+        document.getElementById('adminUserEmail').textContent = user.email;
+        loadOrders();
+        loadProductsAdmin();
+    } else {
+        document.getElementById('loginScreen').classList.remove('hidden');
+        document.getElementById('adminDashboard').classList.add('hidden');
+    }
+});
+
+async function adminLogin() {
+    const email = document.getElementById('adminEmail').value;
+    const password = document.getElementById('adminPassword').value;
+    const errorEl = document.getElementById('loginError');
+    
+    if (email !== ADMIN_EMAIL || password !== ADMIN_PASSWORD) {
+        errorEl.textContent = "Invalid credentials. Use admin@daraz.pk / admin123";
+        errorEl.classList.remove('hidden');
+        return;
+    }
+    
+    try {
+        await window.firebase.signInWithEmailAndPassword(window.firebase.auth, email, password);
+    } catch (error) {
+        // If user doesn't exist, create it
+        if (error.code === 'auth/user-not-found' || error.code === 'auth/wrong-password') {
+            try {
+                await window.firebase.createUserWithEmailAndPassword(window.firebase.auth, email, password);
+            } catch (e) {
+                errorEl.textContent = "Error: " + e.message;
+                errorEl.classList.remove('hidden');
+            }
+        } else {
+            errorEl.textContent = "Error: " + error.message;
+            errorEl.classList.remove('hidden');
+        }
+    }
+}
+
+async function adminLogout() {
+    await window.firebase.signOut(window.firebase.auth);
+}
+
+function showAdminTab(tab) {
+    document.querySelectorAll('.admin-panel').forEach(p => p.classList.add('hidden'));
+    document.querySelectorAll('#tabOrders, #tabProducts, #tabAddProduct').forEach(b => { b.classList.remove('border-b-2', 'border-[#F85606]', 'text-[#F85606]'); b.classList.add('text-gray-500'); });
+    
+    document.getElementById('panel' + tab.charAt(0).toUpperCase() + tab.slice(1)).classList.remove('hidden');
+    document.getElementById('tab' + tab.charAt(0).toUpperCase() + tab.slice(1)).classList.add('border-b-2', 'border-[#F85606]', 'text-[#F85606]');
+    document.getElementById('tab' + tab.charAt(0).toUpperCase() + tab.slice(1)).classList.remove('text-gray-500');
+}
+
+// ========== LOAD ORDERS ==========
+async function loadOrders() {
+    try {
+        const { db, collection, getDocs, query, orderBy } = window.firebase;
+        const ordersRef = collection(db, "orders");
+        const q = query(ordersRef, orderBy("createdAt", "desc"));
+        const snapshot = await getDocs(q);
+        
+        const tbody = document.getElementById('ordersTableBody');
+        if (snapshot.empty) {
+            tbody.innerHTML = '<tr><td colspan="8" class="px-4 py-12 text-center text-gray-500">No orders yet</td></tr>';
+            return;
+        }
+        
+        tbody.innerHTML = '';
+        snapshot.forEach(doc => {
+            const order = { id: doc.id, ...doc.data() };
+            const itemsText = order.items.map(i => `${i.title} (x${i.qty})`).join(', ');
+            const date = order.createdAt?.toDate ? order.createdAt.toDate().toLocaleString() : new Date(order.createdAt).toLocaleString();
+            
+            const statusColors = {
+                pending: 'bg-yellow-100 text-yellow-800',
+                shipped: 'bg-blue-100 text-blue-800',
+                delivered: 'bg-green-100 text-green-800',
+                cancelled: 'bg-red-100 text-red-800'
+            };
+            
+            const tr = document.createElement('tr');
+            tr.className = 'hover:bg-[#F9FAFB]';
+            tr.innerHTML = `
+                <td class="px-4 py-3 text-sm font-mono text-gray-600">${order.id.slice(0,8)}...</td>
+                <td class="px-4 py-3 text-sm daraz-black">${order.customerName}</td>
+                <td class="px-4 py-3 text-sm">${order.phone}</td>
+                <td class="px-4 py-3 text-sm text-gray-600 max-w-xs truncate block">${itemsText}</td>
+                <td class="px-4 py-3 text-sm font-bold text-[#F85606]">Rs. ${order.totalAmount}</td>
+                <td class="px-4 py-3"><span class="px-2 py-1 rounded text-xs font-medium ${statusColors[order.status] || 'bg-gray-100 text-gray-800'}">${order.status}</span></td>
+                <td class="px-4 py-3 text-sm text-gray-500">${date}</td>
+                <td class="px-4 py-3">
+                    <div class="flex gap-1">
+                        <button onclick="updateOrderStatus('${order.id}', 'shipped')" class="px-2 py-1 text-xs bg-blue-100 text-blue-700 rounded hover:bg-blue-200">Ship</button>
+                        <button onclick="updateOrderStatus('${order.id}', 'delivered')" class="px-2 py-1 text-xs bg-green-100 text-green-700 rounded hover:bg-green-200">Deliver</button>
+                        <button onclick="deleteOrder('${order.id}')" class="px-2 py-1 text-xs bg-red-100 text-red-700 rounded hover:bg-red-200">Delete</button>
+                    </div>
+                </td>
+            `;
+            tbody.appendChild(tr);
+        });
+    } catch (error) {
+        console.error("Error loading orders:", error);
+        document.getElementById('ordersTableBody').innerHTML = '<tr><td colspan="8" class="px-4 py-12 text-center text-red-500">Error loading orders</td></tr>';
+    }
+}
+
+async function updateOrderStatus(orderId, status) {
+    try {
+        const { db, doc, updateDoc } = window.firebase;
+        await updateDoc(doc(db, "orders", orderId), { status });
+        loadOrders();
+    } catch (error) {
+        alert("Error updating status: " + error.message);
+    }
+}
+
+async function deleteOrder(orderId) {
+    if (!confirm("Delete this order permanently?")) return;
+    try {
+        const { db, doc, deleteDoc } = window.firebase;
+        await deleteDoc(doc(db, "orders", orderId));
+        loadOrders();
+    } catch (error) {
+        alert("Error deleting order: " + error.message);
+    }
+}
+
+// ========== LOAD PRODUCTS ADMIN ==========
+async function loadProductsAdmin() {
+    try {
+        const { db, collection, getDocs } = window.firebase;
+        const productsRef = collection(db, "products");
+        const snapshot = await getDocs(productsRef);
+        
+        const tbody = document.getElementById('productsTableBody');
+        if (snapshot.empty) {
+            tbody.innerHTML = '<tr><td colspan="8" class="px-4 py-12 text-center text-gray-500">No products</td></tr>';
+            return;
+        }
+        
+        tbody.innerHTML = '';
+        snapshot.forEach(doc => {
+            const p = { id: doc.id, ...doc.data() };
+            const tr = document.createElement('tr');
+            tr.className = 'hover:bg-[#F9FAFB]';
+            tr.innerHTML = `
+                <td class="px-4 py-3"><img src="${p.image}" alt="" class="w-16 h-16 object-cover rounded"></td>
+                <td class="px-4 py-3 text-sm daraz-black max-w-xs truncate block">${p.title}</td>
+                <td class="px-4 py-3 text-sm text-gray-600 capitalize">${p.category}</td>
+                <td class="px-4 py-3 text-sm font-bold text-[#F85606]">Rs. ${p.price}</td>
+                <td class="px-4 py-3 text-sm text-gray-400 line-through">Rs. ${p.originalPrice}</td>
+                <td class="px-4 py-3 text-sm text-[#F85606] font-bold">${p.discount}</td>
+                <td class="px-4 py-3 text-sm">${p.rating} <i class="fa-solid fa-star star-filled text-xs"></i></td>
+                <td class="px-4 py-3">
+                    <button onclick="deleteProduct('${p.id}')" class="px-2 py-1 text-xs bg-red-100 text-red-700 rounded hover:bg-red-200">Delete</button>
+                </td>
+            `;
+            tbody.appendChild(tr);
+        });
+    } catch (error) {
+        console.error("Error loading products:", error);
+        document.getElementById('productsTableBody').innerHTML = '<tr><td colspan="8" class="px-4 py-12 text-center text-red-500">Error loading products</td></tr>';
+    }
+}
+
+async function deleteProduct(productId) {
+    if (!confirm("Delete this product permanently?")) return;
+    try {
+        const { db, doc, deleteDoc } = window.firebase;
+        await deleteDoc(doc(db, "products", productId));
+        loadProductsAdmin();
+    } catch (error) {
+        alert("Error deleting product: " + error.message);
+    }
+}
+
+// ========== ADD PRODUCT FORM ==========
+document.getElementById('addProductForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const msgEl = document.getElementById('addProductMsg');
+    
+    const productData = {
+        title: document.getElementById('prodTitle').value,
+        category: document.getElementById('prodCategory').value,
+        price: parseInt(document.getElementById('prodPrice').value),
+        originalPrice: parseInt(document.getElementById('prodOriginalPrice').value),
+        discount: document.getElementById('prodDiscount').value,
+        rating: parseFloat(document.getElementById('prodRating').value) || 4.5,
+        sold: document.getElementById('prodSold').value || "0 sold",
+        image: document.getElementById('prodImage').value,
+        badge: document.getElementById('prodBadge').value || "New"
+    };
+    
+    try {
+        const { db, collection, addDoc } = window.firebase;
+        await addDoc(collection(db, "products"), productData);
+        msgEl.textContent = "Product added successfully!";
+        msgEl.className = "text-sm text-center mt-4 text-green-600";
+        msgEl.classList.remove('hidden');
+        document.getElementById('addProductForm').reset();
+        loadProductsAdmin();
+    } catch (error) {
+        msgEl.textContent = "Error: " + error.message;
+        msgEl.className = "text-sm text-center mt-4 text-red-600";
+        msgEl.classList.remove('hidden');
+    }
+});
+</script>
+</body>
+</html>
