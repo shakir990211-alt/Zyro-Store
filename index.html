@@ -38,7 +38,7 @@
         .tab-active { background-color: #F85606 !important; color: white !important; }
     </style>
 </head>
-<body class="antialiased pb-28">
+<body class="antialiased pb-28" style="margin:0;padding:0;">
 
 <!-- ========== TOP ORANGE BAR ========== -->
 <div class="bg-[#F85606] text-white px-4 py-2 flex justify-between items-center text-sm font-medium z-50 fixed top-0 left-0 right-0 h-11">
@@ -52,23 +52,8 @@
     </div>
 </div>
 
-<!-- ========== HEADER SEARCH BAR ========== -->
-<div class="bg-[#F85606] px-4 py-3 relative z-40 sticky top-11 pt-11">
-    <div class="flex items-center gap-2 max-w-xl mx-auto">
-        <div class="relative w-full">
-            <input type="text" id="searchInput" placeholder="kashmiri bangles" class="w-full bg-white rounded px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#F85606] pl-10" autocomplete="off">
-            <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"></i>
-        </div>
-        <button onclick="handleSearch()" class="daraz-orange text-white px-5 py-2.5 rounded font-bold text-sm whitespace-nowrap">Search</button>
-    </div>
-    <!-- Rotating placeholder notice -->
-    <div class="max-w-xl mx-auto mt-2 text-xs text-[#E5E7EB] text-center px-2">
-        <span class="italic opacity-80">Popular: kashmiri bangles, bags for girls, airpods, watch for boys, makeup</span>
-    </div>
-</div>
-
-<!-- ========== BOTTOM NAV ICONS (Header level) ========== -->
-<div class="bg-[#F85606] px-3 py-2 overflow-x-auto hide-scrollbar whitespace-nowrap border-b border-[#E5E7EB] sticky top-[92px] z-30 -mt-px">
+<!-- ========== CATEGORIES BAR (Directly below top bar) ========== -->
+<div class="bg-[#F85606] px-3 py-1 m-0 gap-0 overflow-x-auto hide-scrollbar whitespace-nowrap flex items-center sticky top-11 z-30">
     <div class="inline-flex gap-2 md:gap-3 items-center">
         <button class="flex flex-col items-center gap-1 text-xs text-[#F85606] font-bold min-w-[60px]">
             <i class="fa-solid fa-coins text-xl"></i> Coins
@@ -105,7 +90,7 @@
 </div>
 
 <!-- ========== HOME PAGE ========== -->
-<div id="homePage" class="page active min-h-screen pt-36">
+<div id="homePage" class="page active min-h-screen pt-20 mt-0">
 
     <!-- 11.11 Sale Banner -->
     <section class="gradient-purple p-4 text-white rounded-b-2xl relative overflow-hidden">
@@ -121,6 +106,20 @@
             </div>
         </div>
     </section>
+
+    <!-- Search Bar (in content) -->
+    <div class="bg-[#F85606] px-4 py-3">
+        <div class="flex items-center gap-2 max-w-xl mx-auto">
+            <div class="relative w-full">
+                <input type="text" id="searchInput" placeholder="kashmiri bangles" class="w-full bg-white rounded px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#F85606] pl-10" autocomplete="off">
+                <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"></i>
+            </div>
+            <button onclick="handleSearch()" class="daraz-orange text-white px-5 py-2.5 rounded font-bold text-sm whitespace-nowrap">Search</button>
+        </div>
+        <div class="max-w-xl mx-auto mt-2 text-xs text-[#E5E7EB] text-center px-2">
+            <span class="italic opacity-80">Popular: kashmiri bangles, bags for girls, airpods, watch for boys, makeup</span>
+        </div>
+    </div>
 
     <!-- Flash Sale -->
     <section class="bg-[#F85606] text-white p-4 relative overflow-hidden">
@@ -151,14 +150,14 @@
     </section>
 
     <!-- Category Tabs -->
-    <section class="bg-white p-4 border-t border-[#E5E7EB] sticky top-[132px] z-20">
+    <section class="bg-white p-4 border-t border-[#E5E7EB] sticky top-[51px] z-20">
         <div class="flex gap-2 overflow-x-auto hide-scrollbar mb-4" id="categoryTabsContainer">
             <!-- Populated by JS -->
         </div>
     </section>
 
     <!-- Product Grid -->
-    <section class="bg-[#F9FAFB] p-4 pb-28" id="productGridContainer">
+    <section class="bg-[#F9FAFB] p-4 pb-28 mt-0 pt-0" id="productGridContainer">
         <div class="grid grid-cols-2 gap-3" id="productGrid">
             <!-- Populated by JS -->
         </div>
